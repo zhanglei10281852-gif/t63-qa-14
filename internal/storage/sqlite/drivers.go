@@ -112,14 +112,7 @@ func (s *queryStore) SaveDriver(ctx context.Context, value crew.Driver, expected
 			return err
 		}
 	}
-	certifications := value.Certifications
-	if expectedVersion != 0 {
-		certifications = append([]crew.Certification(nil), value.Certifications...)
-	}
-	for _, cert := range certifications {
-		if expectedVersion == 0 {
-			continue
-		}
+	for _, cert := range value.Certifications {
 		if _, err := s.e.ExecContext(ctx, "INSERT INTO driver_certifications(id, driver_id, certification_code, vehicle_type, expires_at) VALUES(?,?,?,?,?)", cert.ID, value.ID, cert.Code, cert.VehicleType, formatTime(cert.ExpiresAt)); err != nil {
 			return databaseError(err)
 		}
